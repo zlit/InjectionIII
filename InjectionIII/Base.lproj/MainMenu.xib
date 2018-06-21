@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -16,11 +16,9 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="enableWatcher" destination="0iA-WA-gxc" id="vVT-sI-q78"/>
-                <outlet property="startItem" destination="vsd-ll-3nr" id="ODN-wa-BTp"/>
                 <outlet property="statusMenu" destination="V8Q-mq-A2f" id="Epo-HD-J21"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
                 <outlet property="windowItem" destination="aUF-d1-5bR" id="MxW-hd-aZ7"/>
-                <outlet property="xprobeItem" destination="R6p-Yl-7qz" id="Ebf-Kl-PWB"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -664,7 +662,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="480" height="360"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -672,22 +670,10 @@
         </window>
         <menu autoenablesItems="NO" id="V8Q-mq-A2f">
             <items>
-                <menuItem title="Start Injection" keyEquivalent="=" id="vsd-ll-3nr">
-                    <modifierMask key="keyEquivalentModifierMask" control="YES"/>
-                    <connections>
-                        <action selector="autoInject:" target="Voe-Tx-rLC" id="YDX-ZY-Oim"/>
-                    </connections>
-                </menuItem>
                 <menuItem title="File Watcher" state="on" id="0iA-WA-gxc">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="toggleState:" target="Voe-Tx-rLC" id="old-T7-DMa"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Run Xprobe" id="R6p-Yl-7qz">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="runXprobe:" target="Voe-Tx-rLC" id="OLt-ZD-lyd"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Window" hidden="YES" id="aUF-d1-5bR">
@@ -716,18 +702,6 @@
                     </menu>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="y1I-84-xAU"/>
-                <menuItem title="About Injection" id="08f-zd-aS5">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="orderFrontStandardAboutPanel:" target="-1" id="b6u-Vx-pO5"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Help/Donate" id="kFj-jW-1uq">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="donate:" target="Voe-Tx-rLC" id="Scj-Z3-yFA"/>
-                    </connections>
-                </menuItem>
                 <menuItem title="Quit Injection" id="LUw-n8-2Gj">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

@@ -142,8 +142,12 @@
     if (read(clientSocket, utf8, length) != length)
         return nil;
     utf8[length] = '\000';
-    return [NSString stringWithUTF8String:utf8];
+    
+    NSString *readStr = [NSString stringWithUTF8String:utf8];
+//    NSLog(@"%@ read : %@",NSStringFromClass([self class]),readStr);
+    return readStr;
 }
+
 
 - (BOOL)writeString:(NSString *)string {
     const char *utf8 = string.UTF8String;
@@ -151,6 +155,7 @@
     if (write(clientSocket, &length, sizeof length) != sizeof length ||
         write(clientSocket, utf8, length) != length)
         return FALSE;
+//    NSLog(@"%@ write : %@",NSStringFromClass([self class]),string);
     return TRUE;
 }
 

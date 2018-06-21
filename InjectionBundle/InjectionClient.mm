@@ -56,6 +56,7 @@
 
 + (void)load {
     // connect to InjetionIII.app using sicket
+    printf("InjectionClient is loading.\n");
     if (InjectionClient *client = [self connectTo:INJECTION_ADDRESS])
         [client run];
     else
@@ -64,10 +65,12 @@
 }
 
 - (void)runInBackground {
+    [self writeString:[NSBundle mainBundle].privateFrameworksPath];
+    
     NSString *projectFile = [self readString];
     printf("Injection connected, watching %s/...\n",
            projectFile.stringByDeletingLastPathComponent.UTF8String);
-    [self writeString:[NSBundle mainBundle].privateFrameworksPath];
+    
 #ifdef __LP64__
     [self writeString:@"x86_64"];
 #else
