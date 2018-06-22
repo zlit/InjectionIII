@@ -128,11 +128,33 @@ static NSMutableDictionary *projectInjected = [NSMutableDictionary new];
     // start up a file watcher to write generated tmpfile path to client app
     FileWatcher *fileWatcher = [[FileWatcher alloc] initWithRoot:projectRoot plugin:^(NSArray *changed) {
         NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-        for (NSString *swiftSource in changed)
+        for (NSString *swiftSource in changed){
             if (now > lastInjected[swiftSource].doubleValue + MIN_INJECTION_INTERVAL && now > pause) {
                 lastInjected[swiftSource] = [NSNumber numberWithDouble:now];
-                inject(swiftSource);
+                if ([swiftSource hasSuffix:@".strings"]) {
+                    NSError *error;
+                    NSString *content = [NSString stringWithContentsOfFile:swiftSource encoding:NSUTF8StringEncoding error:&error];
+                    if(content.length > 0 && error == nil){
+                        NSString *fileName;
+                        NSRange range = [swiftSource rangeOfString:@"Resources/"];
+                        if (range.location != -1) {
+                            fileName = [swiftSource substringFromIndex:range.location+range.length];    
+                        }else{
+                            fileName = [swiftSource lastPathComponent];
+                        }
+                        
+                        NSLog(@"%@",swiftSource);
+                        NSLog(@"%@",fileName);
+                        
+                        [self writeString:[NSString stringWithFormat:@"THEME  %@swift_lzl%@",fileName,content]];
+                    }else{
+                        NSLog(@"error : %@",error);
+                    }
+                }else{
+                    inject(swiftSource);
+                }
             }
+        }
     }];
     
     // read status requests from client app

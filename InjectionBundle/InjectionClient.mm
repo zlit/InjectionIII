@@ -19,38 +19,6 @@
 #import "macOSInjection-Swift.h"
 #endif
 
-#ifdef XPROBE_PORT
-#import "../XprobePlugin/Classes/Xtrace.mm"
-#import "../XprobePlugin/Classes/Xprobe.mm"
-#import "../XprobePlugin/Classes/Xprobe+Service.mm"
-
-@interface BundleInjection: NSObject
-@end
-@implementation BundleInjection
-+ (const char *)connectedAddress {
-    return "127.0.0.1";
-}
-@end
-
-@implementation Xprobe(Seeding)
-#ifdef __IPHONE_OS_VERSION_MIN_REQUIRED
-+ (NSArray *)xprobeSeeds {
-    UIApplication *app = [UIApplication sharedApplication];
-    NSMutableArray *seeds = [[app windows] mutableCopy];
-    [seeds insertObject:app atIndex:0];
-    return seeds;
-}
-#else
-+ (NSArray *)xprobeSeeds {
-    NSApplication *app = [NSApplication sharedApplication];
-    NSMutableArray *seeds = [[app windows] mutableCopy];
-    if ( app.delegate )
-        [seeds insertObject:app.delegate atIndex:0];
-    return seeds;
-}
-#endif
-@end
-#endif
 
 @implementation InjectionClient
 
@@ -98,28 +66,35 @@
             printf("%s\n", [swiftSource substringFromIndex:@"LOG ".length].UTF8String);
         else if ([swiftSource hasPrefix:@"SIGNED "])
             [writer writeString:[swiftSource substringFromIndex:@"SIGNED ".length]];
+        else if ([swiftSource hasPrefix:@"THEME "]){
+            NSString *themeContent = [swiftSource substringFromIndex:@"SIGNED ".length];
+            if([themeContent containsString:@"swift_lzl"]){
+                NSArray *splitArray = [themeContent componentsSeparatedByString:@"swift_lzl"];
+                if ([splitArray count] == 2) {
+                    NSString *fileName = [splitArray firstObject];
+                    NSString *content = [splitArray lastObject];
+                    NSString *type = [fileName pathExtension];
+                    NSString *filePath = [fileName stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:type ] withString:@""];
+                    NSString *themePath = [[NSBundle mainBundle] pathForResource:filePath
+                                                                          ofType:type];
+                    NSLog(@"%@",themePath);
+                    NSError *error;
+                    [content writeToFile:themePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+                    if (error) {
+                        NSLog(@"%@",error);
+                    }
+                    NSLog(@"replace theme down");
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"ZLTHEMEINJECT"
+                                                                        object:nil];
+                }
+            }
+        }
         else
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSError *err;
                 if ([swiftSource hasPrefix:@"INJECT "])
                     [SwiftInjection injectWithTmpfile:[swiftSource substringFromIndex:@"INJECT ".length] error:&err];
-#ifdef XPROBE_PORT
-                else if ([swiftSource hasPrefix:@"XPROBE"]) {
-                    [Xprobe connectTo:NULL retainObjects:YES];
-                    [Xprobe search:@""];
-                }
-                else if ([swiftSource hasPrefix:@"EVAL "]) {
-                    NSString *args = [swiftSource substringFromIndex:@"EVAL ".length];
-                    NSArray<NSString *> *parts = [args componentsSeparatedByString:@"^"];
-                    int pathID = parts[0].intValue;
-                    [self writeString:@"PAUSE 5"];
-                    if ([xprobePaths[pathID].object respondsToSelector:@selector(evalSwift:)])
-                        [xprobePaths[pathID].object evalSwift:parts[3].stringByRemovingPercentEncoding];
-                    else
-                        printf("Eval only works on NSObject subclasses\n");
-                    [Xprobe writeString:[NSString stringWithFormat:@"$('BUSY%d').hidden = true; ", pathID]];
-                }
-#endif
                 [self writeString:err ? [@"ERROR " stringByAppendingString:err.localizedDescription] : @"COMPLETE"];
             });
 }
